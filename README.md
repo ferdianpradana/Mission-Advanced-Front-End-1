@@ -1,19 +1,51 @@
-# React + Vite
+# Chill — Movie Streaming Platform (Mission 2)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi frontend React untuk platform streaming film "Chill", dibuat sebagai Mission 2 (interactive web) menggunakan Vite + React + Tailwind CSS.
 
-Currently, two official plugins are available:
+## Menjalankan Proyek
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Halaman
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Login** (`/login`) — form masuk.
+- **Register** (`/register`) — form daftar akun.
+- **Dashboard** (`/dashboard`) — homepage berisi hero banner dan daftar film per kategori.
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+## Fitur Interaktif: Daftar Saya (My List)
 
-## Expanding the ESLint configuration
+Fitur ini menggunakan `useState` dan array of object untuk mengelola daftar tontonan pribadi pengguna, dengan operasi CRUD lengkap yang seluruhnya tampil di homepage (Dashboard):
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+| Operasi | Cara pakai | Lokasi |
+| --- | --- | --- |
+| **Create** | Klik tombol `+` pada poster/thumbnail film di baris "Melanjutkan Tonton Film", "Top Rating", "Trending", atau "Rilis Baru" | Semua baris film di Dashboard |
+| **Read** | Film yang sudah ditambahkan otomatis muncul di baris "Daftar Saya" (menampilkan pesan kosong jika belum ada isi) | Baris paling atas Dashboard |
+| **Update** | Klik tombol "Tandai" pada kartu di "Daftar Saya" untuk menandai status sudah/belum ditonton | Baris "Daftar Saya" |
+| **Delete** | Klik ikon tempat sampah pada kartu di "Daftar Saya" untuk menghapusnya dari daftar | Baris "Daftar Saya" |
+
+### Struktur State
+
+State `myList` (array of object) dikelola di [`src/App.jsx`](src/App.jsx) menggunakan `useState`, lalu di-passing sebagai props ke child component:
+
+```
+App.jsx (state: myList, handleToggleList, handleToggleWatched, handleRemoveFromList)
+  └─ Dashboard.jsx (props: myList, myListIds, onToggleList, onToggleWatched, onRemoveFromList)
+       └─ MovieRow.jsx (props diteruskan ke card)
+            ├─ PosterCard.jsx / ThumbnailCard.jsx (tombol tambah ke Daftar Saya)
+            └─ MyListCard.jsx (tombol tandai ditonton & hapus)
+```
+
+Setiap item pada `myList` berbentuk:
+
+```js
+{ id, title, image, gradient, badge, watched }
+```
+
+## Tech Stack
+
+- React 19 + Vite
+- React Router DOM (routing antar halaman)
+- Tailwind CSS (styling)

@@ -4,7 +4,7 @@ import { Hero } from "../../components/dashboard/Hero";
 import { MovieRow } from "../../components/dashboard/MovieRow";
 import { continueWatching, topRating, trending, newReleases } from "../../data/movies";
 
-export function Dashboard() {
+export function Dashboard({ myList = [], myListIds, onToggleList, onToggleWatched, onRemoveFromList }) {
     return (
         <div className="min-h-screen bg-[#0b0b0f]">
             <Navbar />
@@ -15,10 +15,42 @@ export function Dashboard() {
                 ageRating="18+"
             />
 
-            <MovieRow title="Melanjutkan Tonton Film" items={continueWatching} variant="thumbnail" />
-            <MovieRow title="Top Rating Film dan Series Hari ini" items={topRating} variant="poster" />
-            <MovieRow title="Film Trending" items={trending} variant="poster" />
-            <MovieRow title="Rilis Baru" items={newReleases} variant="poster" />
+            <MovieRow
+                title="Daftar Saya"
+                items={myList}
+                variant="mylist"
+                onToggleWatched={onToggleWatched}
+                onRemove={onRemoveFromList}
+                emptyMessage="Belum ada film di daftar kamu. Tekan tombol + pada film di bawah untuk menambahkannya."
+            />
+            <MovieRow
+                title="Melanjutkan Tonton Film"
+                items={continueWatching}
+                variant="thumbnail"
+                myListIds={myListIds}
+                onToggleList={onToggleList}
+            />
+            <MovieRow
+                title="Top Rating Film dan Series Hari ini"
+                items={topRating}
+                variant="poster"
+                myListIds={myListIds}
+                onToggleList={onToggleList}
+            />
+            <MovieRow
+                title="Film Trending"
+                items={trending}
+                variant="poster"
+                myListIds={myListIds}
+                onToggleList={onToggleList}
+            />
+            <MovieRow
+                title="Rilis Baru"
+                items={newReleases}
+                variant="poster"
+                myListIds={myListIds}
+                onToggleList={onToggleList}
+            />
 
             <Footer />
         </div>

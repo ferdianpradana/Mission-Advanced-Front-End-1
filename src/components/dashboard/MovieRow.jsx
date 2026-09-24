@@ -3,13 +3,23 @@ import { ArrowLeftIcon, ArrowRightIcon } from "../ui/icons";
 import { PosterCard } from "./PosterCard";
 import { ThumbnailCard } from "./ThumbnailCard";
 import { PreviewCard } from "./PreviewCard";
+import { MyListCard } from "./MyListCard";
 
-export function MovieRow({ title, items, variant = "poster" }) {
+export function MovieRow({ title, items, variant = "poster", myListIds, onToggleList, onToggleWatched, onRemove, emptyMessage }) {
     const scrollRef = useRef(null);
 
     const scroll = (direction) => {
         scrollRef.current?.scrollBy({ left: direction * 600, behavior: "smooth" });
     };
+
+    if (items.length === 0 && emptyMessage) {
+        return (
+            <section className="px-4 py-5 sm:px-6 sm:py-6 md:px-10">
+                <h2 className="mb-3 text-base font-bold text-white sm:mb-4 sm:text-xl">{title}</h2>
+                <p className="text-sm text-white/50">{emptyMessage}</p>
+            </section>
+        );
+    }
 
     return (
         <section className="px-4 py-5 sm:px-6 sm:py-6 md:px-10">
@@ -32,10 +42,22 @@ export function MovieRow({ title, items, variant = "poster" }) {
                     {items.map((item) =>
                         item.preview ? (
                             <PreviewCard key={item.id} {...item} />
+                        ) : variant === "mylist" ? (
+                            <MyListCard key={item.id} {...item} onToggleWatched={onToggleWatched} onRemove={onRemove} />
                         ) : variant === "thumbnail" ? (
-                            <ThumbnailCard key={item.id} {...item} />
+                            <ThumbnailCard
+                                key={item.id}
+                                {...item}
+                                inList={myListIds?.has(item.id)}
+                                onToggleList={onToggleList}
+                            />
                         ) : (
-                            <PosterCard key={item.id} {...item} />
+                            <PosterCard
+                                key={item.id}
+                                {...item}
+                                inList={myListIds?.has(item.id)}
+                                onToggleList={onToggleList}
+                            />
                         )
                     )}
                 </div>
