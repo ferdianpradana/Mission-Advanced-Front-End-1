@@ -26,7 +26,7 @@ export function Dashboard() {
             {isLoading && <p className="px-4 py-6 text-sm text-white/50 sm:px-6 md:px-10">Memuat data film...</p>}
             {errorMessage && (
                 <p className="px-4 py-6 text-sm text-red-400 sm:px-6 md:px-10">
-                    Gagal memuat data: {errorMessage}. Pastikan server fake API (json-server) sedang berjalan.
+                    Gagal memuat data: {errorMessage}. Pastikan VITE_API_BASE_URL sudah benar dan API-nya bisa diakses.
                 </p>
             )}
 
