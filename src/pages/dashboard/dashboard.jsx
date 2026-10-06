@@ -1,17 +1,47 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navbar } from "../../components/layout/Navbar";
 import { Footer } from "../../components/layout/Footer";
 import { Hero } from "../../components/dashboard/Hero";
 import { MovieRow } from "../../components/dashboard/MovieRow";
-import { useMovies } from "../../hooks/useMovies";
-import { useMyList } from "../../hooks/useMyList";
+import { fetchMovies } from "../../store/redux/moviesSlice";
+import { fetchMyList, addMovieToList, updateMyListMovie, removeMovieFromList } from "../../store/redux/mylistSlice";
 
 export function Dashboard() {
-    const { continueWatching, topRating, trending, newReleases, loading: moviesLoading, error: moviesError } = useMovies();
-    const { myList, loading: myListLoading, error: myListError, toggleList, toggleWatched, removeItem } = useMyList();
+    const dispatch = useDispatch();
 
+    const { items: movies, status: moviesStatus, error: moviesError } = useSelector((state) => state.movies);
+    const { items: myList, status: myListStatus, error: myListError } = useSelector((state) => state.mylist);
+
+    useEffect(() => {
+        dispatch(fetchMovies());
+        dispatch(fetchMyList());
+    }, [dispatch]);
+
+    const byCategory = (category) => movies.filter((movie) => movie.category === category);
     const myListIds = new Set(myList.map((item) => item.movieId));
-    const isLoading = moviesLoading || myListLoading;
+
+    const isLoading = moviesStatus === "loading" || myListStatus === "loading";
     const errorMessage = moviesError || myListError;
+
+    const toggleList = (movie) => {
+        const existing = myList.find((item) => item.movieId === movie.id);
+        if (existing) {
+            dispatch(removeMovieFromList(existing.id));
+        } else {
+            dispatch(addMovieToList(movie));
+        }
+    };
+
+    const toggleWatched = (id) => {
+        const item = myList.find((entry) => entry.id === id);
+        if (!item) return;
+        dispatch(updateMyListMovie({ id, data: { watched: !item.watched } }));
+    };
+
+    const removeItem = (id) => {
+        dispatch(removeMovieFromList(id));
+    };
 
     return (
         <div className="min-h-screen bg-[#0b0b0f]">
@@ -42,28 +72,28 @@ export function Dashboard() {
                     />
                     <MovieRow
                         title="Melanjutkan Tonton Film"
-                        items={continueWatching}
+                        items={byCategory("continueWatching")}
                         variant="thumbnail"
                         myListIds={myListIds}
                         onToggleList={toggleList}
                     />
                     <MovieRow
                         title="Top Rating Film dan Series Hari ini"
-                        items={topRating}
+                        items={byCategory("topRating")}
                         variant="poster"
                         myListIds={myListIds}
                         onToggleList={toggleList}
                     />
                     <MovieRow
                         title="Film Trending"
-                        items={trending}
+                        items={byCategory("trending")}
                         variant="poster"
                         myListIds={myListIds}
                         onToggleList={toggleList}
                     />
                     <MovieRow
                         title="Rilis Baru"
-                        items={newReleases}
+                        items={byCategory("newReleases")}
                         variant="poster"
                         myListIds={myListIds}
                         onToggleList={toggleList}
